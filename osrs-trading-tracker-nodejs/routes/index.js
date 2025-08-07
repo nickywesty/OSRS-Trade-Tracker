@@ -67,32 +67,39 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Daily returns route
+// All-time returns route (formerly daily-returns)
 router.get('/daily-returns', async (req, res) => {
   try {
+    const dashboardStats = await db.getDashboardStats();
     const dailyReturns = await db.getDailyReturns();
 
-    // Create weekly comparison data (last 7 days)
-    const weekData = dailyReturns.slice(0, 7).reverse(); // Get last 7 days and reverse for chronological order
-    const weekTotalProfit = weekData.reduce((sum, day) => sum + day.dailyProfit, 0);
-
-    const weeklyComparison = {
-      weekData: weekData,
-      weekTotalProfit: weekTotalProfit
-    };
+    // Calculate additional stats
+    const tradingDays = dailyReturns.length;
+    const successRate = dashboardStats.totalRecords > 0 ?
+      (dashboardStats.completedFlips / dashboardStats.totalRecords) * 100 : 0;
+    const avgDailyProfit = tradingDays > 0 ?
+      dashboardStats.totalProfit / tradingDays : 0;
 
     res.render('daily-returns', {
-      title: '📅 Daily Returns - OSRS Trading Tracker',
-      dailyReturns: dailyReturns,
-      weeklyComparison: weeklyComparison
+      title: '👑 All-Time Returns - OSRS Trading Tracker',
+      totalProfit: dashboardStats.totalProfit || 0,
+      completedFlips: dashboardStats.completedFlips || 0,
+      totalRecords: dashboardStats.totalRecords || 0,
+      tradingDays: tradingDays,
+      successRate: successRate,
+      avgDailyProfit: avgDailyProfit
     });
   } catch (error) {
-    console.error('Daily returns error:', error);
+    console.error('All-time returns error:', error);
     res.render('daily-returns', {
-      title: 'Daily Returns',
-      dailyReturns: [],
-      weeklyComparison: { weekData: [], weekTotalProfit: 0 },
-      error: 'Failed to load daily returns data'
+      title: 'All-Time Returns',
+      totalProfit: 0,
+      completedFlips: 0,
+      totalRecords: 0,
+      tradingDays: 0,
+      successRate: 0,
+      avgDailyProfit: 0,
+      error: 'Failed to load all-time returns data'
     });
   }
 });
@@ -119,20 +126,17 @@ router.get('/timeline', async (req, res) => {
 // Records routes
 router.get('/records/:status?', async (req, res) => {
   try {
-    const status = req.params.status;
-    const records = await db.getRecords(status);
+    const records = await db.getRecords(); // Remove status filtering
 
     res.render('records', {
       title: '📜 Trading Records - OSRS Trading Tracker',
-      records: records,
-      status: status
+      records: records
     });
   } catch (error) {
     console.error('Records error:', error);
     res.render('records', {
       title: 'Trading Records',
       records: [],
-      status: req.params.status,
       error: 'Failed to load records'
     });
   }

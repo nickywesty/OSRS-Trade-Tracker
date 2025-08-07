@@ -40,22 +40,54 @@ app.engine('hbs', engine({
   helpers: {
     // Helper functions for templates
     formatNumber: (num) => {
+      if (!num && num !== 0) return '0';
       return new Intl.NumberFormat().format(num);
     },
+    json: (context) => {
+      return JSON.stringify(context);
+    },
     formatGP: (num) => {
+      if (!num && num !== 0) return '0 GP';
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M GP';
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K GP';
+      }
+      return Math.round(num).toString() + ' GP';
+    },
+    formatNetWorth: (num) => {
+      if (!num && num !== 0) return '0.0M';
       if (num >= 1000000) {
         return (num / 1000000).toFixed(1) + 'M';
       } else if (num >= 1000) {
         return (num / 1000).toFixed(1) + 'K';
       }
-      return num.toString();
+      return Math.round(num).toString();
     },
     eq: (a, b) => a === b,
     gt: (a, b) => a > b,
     lt: (a, b) => a < b,
+    math: (a, operator, b, operator2, c) => {
+      if (operator2) {
+        // Handle complex math like: a * b / c
+        if (operator === '*' && operator2 === '/') {
+          return Math.round((a * b) / c);
+        }
+      }
+      // Handle simple math
+      switch(operator) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return Math.round(a / b);
+        default: return a;
+      }
+    },
     formatDate: (date) => {
       if (!date) return '';
-      return new Date(date).toLocaleDateString('en-US', {
+      // Add time to avoid timezone issues
+      const dateObj = new Date(date + 'T12:00:00');
+      return dateObj.toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
         year: 'numeric'
@@ -63,13 +95,18 @@ app.engine('hbs', engine({
     },
     formatDateTime: (date) => {
       if (!date) return '';
-      return new Date(date).toLocaleDateString('en-US', {
+      const dateObj = new Date(date);
+      return dateObj.toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit'
       });
-    }
+    },
+    formatDecimal: (num, decimals) => {
+      if (!num && num !== 0) return '0';
+      return parseFloat(num).toFixed(decimals || 1);
+    },
   }
 }));
 

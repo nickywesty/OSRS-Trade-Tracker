@@ -1,111 +1,103 @@
 <div class="container mt-4">
     <h1 class="page-title">
-        <i class="fas fa-calendar-alt treasure-icon me-3"></i>
-        Daily Trading Chronicles
-        <i class="fas fa-scroll treasure-icon ms-3"></i>
+        <i class="fas fa-crown treasure-icon me-3"></i>
+        All-Time Returns
+        <i class="fas fa-trophy treasure-icon ms-3"></i>
     </h1>
 
-    <!-- Weekly Chart -->
+    <!-- All-Time Stats -->
     <div class="daily-card">
         <h3 class="text-center mb-4" style="color: var(--osrs-brown); font-family: 'MedievalSharp', cursive;">
-            <i class="fas fa-chart-bar me-2 treasure-icon"></i>
-            📊 Last 7 Days Performance
+            <i class="fas fa-crown me-2 treasure-icon"></i>
+            👑 Complete Trading Statistics
         </h3>
-        <div class="chart-container" id="chartContainer">
-            <canvas id="weeklyChart" style="display: none;"></canvas>
-            <div id="chartFallback" class="chart-fallback">
-                <h4>📊 7-Day Profit Overview</h4>
-                <div id="simpleChart" class="simple-bar-chart">
-                    <!-- Simple bars will be generated here -->
-                </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <i class="fas fa-coins fa-4x mb-3 treasure-icon"></i>
+                <h2 class="gp-text">{{formatGP totalProfit}}</h2>
+                <strong>💰 Total Profit</strong>
+                <small class="text-muted d-block mt-2">All-time earnings from trading</small>
+            </div>
+
+            <div class="stat-box">
+                <i class="fas fa-check-circle fa-4x mb-3" style="color: var(--osrs-green);"></i>
+                <h2 style="color: var(--osrs-green);">{{formatNumber completedFlips}}</h2>
+                <strong>✅ Completed Flips</strong>
+                <small class="text-muted d-block mt-2">Successful trading adventures</small>
+            </div>
+
+            <div class="stat-box">
+                <i class="fas fa-scroll fa-4x mb-3" style="color: var(--osrs-blue);"></i>
+                <h2 style="color: var(--osrs-blue);">{{formatNumber totalRecords}}</h2>
+                <strong>📜 Total Records</strong>
+                <small class="text-muted d-block mt-2">Trading history entries</small>
+            </div>
+
+            <div class="stat-box">
+                <i class="fas fa-calendar-day fa-4x mb-3" style="color: var(--osrs-gold);"></i>
+                <h2 style="color: var(--osrs-gold);">{{formatNumber tradingDays}}</h2>
+                <strong>📅 Trading Days</strong>
+                <small class="text-muted d-block mt-2">Days with recorded trades</small>
+            </div>
+
+            <div class="stat-box">
+                <i class="fas fa-percentage fa-4x mb-3" style="color: var(--osrs-blue);"></i>
+                <h2 style="color: var(--osrs-blue);">{{formatDecimal successRate 1}}%</h2>
+                <strong>🎯 Success Rate</strong>
+                <small class="text-muted d-block mt-2">Completed vs total trades</small>
+            </div>
+
+            <div class="stat-box">
+                <i class="fas fa-chart-line fa-4x mb-3" style="color: var(--osrs-green);"></i>
+                <h2 class="{{#gt avgDailyProfit 0}}profit-positive{{else}}profit-negative{{/gt}}">
+                    {{formatGP avgDailyProfit}}
+                </h2>
+                <strong>📈 Avg Daily Profit</strong>
+                <small class="text-muted d-block mt-2">Average profit per trading day</small>
             </div>
         </div>
     </div>
 
-    <div class="rune-divider">
-        <i class="fas fa-dice-d20"></i> ⚡ <i class="fas fa-coins"></i> ⚡ <i class="fas fa-gem"></i> ⚡ <i class="fas fa-dice-d20"></i>
-    </div>
+    <!-- Quick Actions -->
+    <div class="daily-card">
+        <h3 class="text-center mb-4" style="color: var(--osrs-brown); font-family: 'MedievalSharp', cursive;">
+            <i class="fas fa-magic me-2 treasure-icon"></i>
+            ⚡ Quick Navigation
+        </h3>
 
-    <!-- Daily Returns List -->
-    <div class="row">
-        {{#each dailyReturns}}
-            <div class="col-lg-6 col-xl-4">
-                <div class="daily-card">
-                    <div class="date-header text-center">
-                        <h4 class="mb-1">
-                            <i class="fas fa-calendar-day me-2"></i>
-                            {{formatDate date}}
-                        </h4>
-                        <small>{{date}}</small>
-                    </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <i class="fas fa-coins fa-3x mb-3 treasure-icon"></i>
-                            <h4 class="{{#gt dailyProfit 0}}profit-positive gp-text{{else}}profit-negative{{/gt}}">
-                                {{formatNumber dailyProfit}} GP
-                            </h4>
-                            <strong>💰 Daily Profit</strong>
-                        </div>
-
-                        <div class="stat-box">
-                            <i class="fas fa-crown fa-3x mb-3" style="color: var(--osrs-gold);"></i>
-                            <h6 class="fw-bold">{{topItem}}</h6>
-                            <small class="{{#gt topItemProfit 0}}profit-positive{{else}}profit-negative{{/gt}}">
-                                {{formatNumber topItemProfit}} GP
-                            </small>
-                        </div>
-
-                        <div class="stat-box">
-                            <i class="fas fa-list-ol fa-3x mb-3" style="color: var(--osrs-blue);"></i>
-                            <h4 style="color: var(--osrs-blue);">{{totalTrades}}</h4>
-                            <strong>📜 Total Trades</strong>
-                        </div>
-
-                        <div class="stat-box">
-                            <i class="fas fa-check-circle fa-3x mb-3" style="color: var(--osrs-green);"></i>
-                            <h4 style="color: var(--osrs-green);">{{finishedTrades}}</h4>
-                            <strong>✅ Completed</strong>
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="fas fa-hourglass-half me-1"></i>
-                                Active: <strong>{{activeTrades}}</strong>
-                            </small>
-                            <small class="text-muted">
-                                <i class="fas fa-calculator me-1"></i>
-                                Success Rate: <strong>{{#gt totalTrades 0}}{{#gt finishedTrades 0}}{{math finishedTrades "*" 100 "/" totalTrades}}%{{else}}0%{{/gt}}{{else}}0%{{/gt}}</strong>
-                            </small>
-                        </div>
-                    </div>
-                </div>
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <a href="/timeline" class="btn btn-info btn-lg w-100">
+                    <i class="fas fa-chart-line me-2"></i>📊 View Timeline
+                </a>
             </div>
-        {{else}}
-            <div class="col-12">
-                <div class="daily-card text-center">
-                    <div style="color: var(--osrs-brown);">
-                        <i class="fas fa-calendar-times fa-4x mb-3"></i>
-                        <h4>No Trading Data Found</h4>
-                        <p>🏰 Begin your trading journey by importing your first CSV file!</p>
-                        {{#if ../isAdmin}}
-                            <a href="/upload" class="btn btn-primary mt-3">
-                                <i class="fas fa-upload me-2"></i>📤 Import Trading Data
-                            </a>
-                        {{/if}}
-                    </div>
-                </div>
+            <div class="col-md-3 mb-3">
+                <a href="/records" class="btn btn-primary btn-lg w-100">
+                    <i class="fas fa-scroll me-2"></i>📜 All Records
+                </a>
             </div>
-        {{/each}}
+            <div class="col-md-3 mb-3">
+                <a href="/records/finished" class="btn btn-success btn-lg w-100">
+                    <i class="fas fa-check me-2"></i>✅ Completed
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="/records/selling" class="btn btn-warning btn-lg w-100">
+                    <i class="fas fa-spinner me-2"></i>🔄 Active
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
     <div class="text-center mt-5 mb-4">
-        <p style="color: var(--osrs-gold); font-family: 'MedievalSharp', cursive; font-size: 1.2rem;">
-            🏰 May your trades be profitable and your losses be minimal! 🏰
+        <p style="color: var(--osrs-gold); font-family: 'MedievalSharp', cursive; font-size: 1.5rem;">
+            🏰 Master of the Grand Exchange! 🏰
         </p>
+        <small style="color: var(--osrs-brown);">
+            Your trading empire continues to grow stronger with each successful flip!
+        </small>
     </div>
 </div>
 
@@ -259,6 +251,31 @@
         60% { transform: translateY(-5px); }
     }
 
+    .clickable-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .clickable-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow:
+            0 25px 50px rgba(0,0,0,0.5),
+            0 0 40px rgba(255,215,0,0.4);
+        border-color: var(--osrs-gold);
+    }
+
+    .click-hint {
+        font-size: 0.8rem;
+        color: var(--osrs-gold);
+        margin-top: 5px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .clickable-card:hover .click-hint {
+        opacity: 1;
+    }
+
     .chart-container {
         background: rgba(255,255,255,0.95);
         border: 4px solid var(--osrs-brown);
@@ -351,6 +368,16 @@
         font-family: 'Cinzel', serif;
     }
 
+    .date-picker {
+        border: 3px solid var(--osrs-brown);
+        border-radius: 15px;
+        padding: 10px 15px;
+        font-size: 1.1rem;
+        background: rgba(255,255,255,0.9);
+        transition: all 0.3s ease;
+        font-family: 'Cinzel', serif;
+    }
+
     .btn-primary:hover {
         background: linear-gradient(135deg, #1E90FF, var(--osrs-blue));
         transform: translateY(-3px);
@@ -360,152 +387,56 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, initializing chart...');
+    // Jump to date from date picker
+    function jumpToDate() {
+        const dateSelector = document.getElementById('dateSelector');
+        const selectedDate = dateSelector.value;
 
-        // Get data from Handlebars
-        const weeklyComparison = {{{json weeklyComparison}}};
-        const weekData = (weeklyComparison && weeklyComparison.weekData) ? weeklyComparison.weekData : [];
+        if (!selectedDate) {
+            alert('Please select a date first!');
+            return;
+        }
 
-        console.log('Weekly comparison object:', weeklyComparison);
-        console.log('Week data array:', weekData);
+        scrollToDate(selectedDate);
+    }
 
-        // Create simple chart with actual data
-        function createSimpleChart() {
-            const simpleChart = document.getElementById('simpleChart');
-            if (!simpleChart) {
-                console.error('Simple chart container not found');
-                return;
+    // Smooth scroll to specific date
+    function scrollToDate(targetDate) {
+        const cards = document.querySelectorAll('.daily-card[data-date]');
+        let targetCard = null;
+
+        cards.forEach(card => {
+            if (card.getAttribute('data-date') === targetDate) {
+                targetCard = card;
             }
+        });
 
-            // Use actual data or create sample data
-            let chartData = weekData;
-            if (!chartData || chartData.length === 0) {
-                console.log('No week data found, creating sample data');
-                chartData = [
-                    { date: '2025-07-31', totalProfit: 0 },
-                    { date: '2025-08-01', totalProfit: 0 },
-                    { date: '2025-08-02', totalProfit: 0 },
-                    { date: '2025-08-03', totalProfit: 0 },
-                    { date: '2025-08-04', totalProfit: 0 },
-                    { date: '2025-08-05', totalProfit: 0 },
-                    { date: '2025-08-06', totalProfit: 0 }
-                ];
-            }
+        if (targetCard) {
+            // Add highlight effect
+            targetCard.style.border = '6px solid var(--osrs-gold)';
+            targetCard.style.boxShadow = '0 0 30px rgba(255,215,0,0.8)';
 
-            // Find max value for scaling
-            const maxProfit = Math.max(...chartData.map(day => day.totalProfit || 0), 1);
-            const maxHeight = 150;
-
-            simpleChart.innerHTML = '';
-
-            chartData.forEach(day => {
-                const profit = day.totalProfit || 0;
-                const height = maxProfit > 0 ? (profit / maxProfit) * maxHeight : 5;
-
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.style.height = Math.max(height, 5) + 'px';
-
-                const label = document.createElement('div');
-                label.className = 'bar-label';
-                const date = new Date(day.date + 'T12:00:00');
-
-                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const dateNum = date.toLocaleDateString('en-US', { day: 'numeric' });
-
-                label.innerHTML = `
-                    <div style="font-weight: bold; margin-bottom: 2px;">${dayName}</div>
-                    <div style="font-size: 10px; opacity: 0.8;">${dateNum}</div>
-                `;
-
-                const value = document.createElement('div');
-                value.className = 'bar-value';
-                if (profit > 0) {
-                    value.textContent = profit.toLocaleString() + ' GP';
-                } else {
-                    value.textContent = '0 GP';
-                }
-
-                bar.appendChild(label);
-                bar.appendChild(value);
-                simpleChart.appendChild(bar);
+            // Smooth scroll
+            targetCard.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
             });
 
-            console.log('Simple chart created with', chartData.length, 'bars');
+            // Remove highlight after 3 seconds
+            setTimeout(() => {
+                targetCard.style.border = '6px solid var(--osrs-brown)';
+                targetCard.style.boxShadow = '';
+            }, 3000);
+        } else {
+            alert('No trading data found for ' + new Date(targetDate).toLocaleDateString() + '. Try a different date!');
         }
+    }
 
-        // Try Chart.js first, fall back to simple chart
-        function tryChartJS() {
-            if (typeof Chart !== 'undefined' && weekData && weekData.length > 0) {
-                console.log('Chart.js available, creating advanced chart...');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Daily returns page loaded successfully!');
 
-                const ctx = document.getElementById('weeklyChart');
-                if (ctx) {
-                    try {
-                        ctx.style.display = 'block';
-                        document.getElementById('chartFallback').style.display = 'none';
-
-                        new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: weekData.map(day => {
-                                    const date = new Date(day.date + 'T12:00:00');
-                                    return date.toLocaleDateString('en-US', {
-                                        weekday: 'short',
-                                        month: 'short',
-                                        day: 'numeric'
-                                    });
-                                }),
-                                datasets: [{
-                                    label: 'Daily Profit (GP)',
-                                    data: weekData.map(day => day.totalProfit || 0),
-                                    backgroundColor: [
-                                        'rgba(255, 215, 0, 0.8)',
-                                        'rgba(255, 165, 0, 0.8)',
-                                        'rgba(255, 215, 0, 0.8)',
-                                        'rgba(255, 140, 0, 0.8)',
-                                        'rgba(255, 215, 0, 0.8)',
-                                        'rgba(255, 165, 0, 0.8)',
-                                        'rgba(255, 215, 0, 0.8)'
-                                    ],
-                                    borderColor: '#8B4513',
-                                    borderWidth: 2
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: '📊 Last 7 Days Profit Performance'
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        ticks: {
-                                            callback: function(value) {
-                                                return value.toLocaleString() + ' GP';
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        console.log('Chart.js chart created successfully!');
-                        return;
-                    } catch (error) {
-                        console.error('Error creating Chart.js chart:', error);
-                    }
-                }
-            }
-
-            console.log('Using simple chart fallback');
-            createSimpleChart();
-        }
-
-        tryChartJS();
+        // Set date picker to today by default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('dateSelector').value = today;
     });
 </script>

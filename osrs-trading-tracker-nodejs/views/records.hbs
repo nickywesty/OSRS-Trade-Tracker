@@ -8,17 +8,11 @@
     <!-- Filter Buttons -->
     <div class="filter-buttons">
         <h5 style="color: var(--osrs-gold); font-family: 'MedievalSharp', cursive; margin-bottom: 20px;">
-            🏰 Filter by Quest Status 🏰
+            🏰 Trading Records 🏰
         </h5>
         <div class="btn-group" role="group">
-            <a href="/records" class="btn btn-outline-primary {{#unless status}}active{{/unless}}">
+            <a href="/records" class="btn btn-outline-primary active">
                 <i class="fas fa-list me-2"></i>📜 All Records
-            </a>
-            <a href="/records/finished" class="btn btn-outline-success {{#eq status 'finished'}}active{{/eq}}">
-                <i class="fas fa-check-circle me-2"></i>✅ Completed Trades
-            </a>
-            <a href="/records/selling" class="btn btn-outline-warning {{#eq status 'selling'}}active{{/eq}}">
-                <i class="fas fa-hourglass-half me-2"></i>🔄 Active Trades
             </a>
         </div>
     </div>
@@ -53,7 +47,6 @@
                 <tr>
                     <th><i class="fas fa-gem me-1"></i>⚔️ Item</th>
                     <th><i class="fas fa-user me-1"></i>🧙 Account</th>
-                    <th><i class="fas fa-flag me-1"></i>📍 Status</th>
                     <th><i class="fas fa-shopping-cart me-1"></i>📦 Bought</th>
                     <th><i class="fas fa-hand-holding-usd me-1"></i>💰 Sold</th>
                     <th><i class="fas fa-coins me-1"></i>💵 Buy Price</th>
@@ -70,11 +63,6 @@
                     <tr>
                         <td><strong style="color: var(--osrs-brown);">🗡️ {{item}}</strong></td>
                         <td><span style="color: var(--osrs-blue); font-weight: bold;">{{account}}</span></td>
-                        <td>
-                        <span class="badge rounded-pill {{#eq status 'FINISHED'}}status-badge-finished{{else}}status-badge-selling{{/eq}}">
-                            {{#eq status 'FINISHED'}}✅ Complete{{else}}🔄 Active{{/eq}}
-                        </span>
-                        </td>
                         <td><strong>{{formatNumber bought}}</strong></td>
                         <td><strong>{{formatNumber sold}}</strong></td>
                         <td><span style="color: var(--osrs-brown);">{{formatNumber avg_buy_price}} GP</span></td>
@@ -294,14 +282,16 @@
 
     .status-badge-finished {
         background: linear-gradient(135deg, var(--osrs-green), #32CD32);
-        color: white;
+        color: #000000 !important;
         border: 2px solid var(--osrs-gold);
+        font-weight: bold;
     }
 
     .status-badge-selling {
         background: linear-gradient(135deg, #FF8C00, #FFA500);
-        color: white;
+        color: #000000 !important;
         border: 2px solid var(--osrs-gold);
+        font-weight: bold;
     }
 
     .loading-spinner {

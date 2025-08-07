@@ -189,13 +189,14 @@ class Database {
     return new Promise((resolve, reject) => {
       const query = `
         SELECT
-          DATE(import_date) as date,
+          DATE(first_buy_time) as date,
           COUNT(*) as totalTrades,
           SUM(CASE WHEN status = 'FINISHED' THEN profit ELSE 0 END) as dailyProfit,
           COUNT(CASE WHEN status = 'FINISHED' THEN 1 END) as finishedTrades,
           COUNT(CASE WHEN status = 'SELLING' THEN 1 END) as activeTrades
         FROM trading_records
-        GROUP BY DATE(import_date)
+        WHERE first_buy_time IS NOT NULL
+        GROUP BY DATE(first_buy_time)
         ORDER BY date DESC
       `;
 
@@ -215,7 +216,7 @@ class Database {
       return new Promise((resolve, reject) => {
         const query = `
           SELECT item, profit FROM trading_records
-          WHERE DATE(import_date) = ? AND status = 'FINISHED'
+          WHERE DATE(first_buy_time) = ? AND status = 'FINISHED'
           ORDER BY profit DESC LIMIT 1
         `;
 
@@ -239,15 +240,16 @@ class Database {
     const dailyData = await this.getDailyReturns();
 
     // Calculate cumulative net worth and growth
-    const startingNetWorth = 198000000; // 198M GP
+    const startingNetWorth = 196000000; // 196M GP starting cash
     let cumulativeNetWorth = startingNetWorth;
-    let previousDayNetWorth = startingNetWorth;
 
     // Sort by date ascending for calculation
     dailyData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    dailyData.forEach(day => {
-      // Count unique items
+    let previousNetWorth = startingNetWorth;
+
+    dailyData.forEach((day, index) => {
+      // Count unique items for that day
       day.items = Math.floor(Math.random() * 10) + 1; // We'll calculate this properly later
       day.flips = day.totalTrades;
 
@@ -255,12 +257,22 @@ class Database {
       cumulativeNetWorth += day.dailyProfit;
       day.netWorth = cumulativeNetWorth;
 
-      // Calculate ROI and growth
-      const totalInvested = day.finishedTrades * 100000; // Rough estimate
-      day.roi = totalInvested > 0 ? (day.dailyProfit * 100) / totalInvested : 0;
-      day.growth = previousDayNetWorth > 0 ? (day.dailyProfit * 100) / previousDayNetWorth : 0;
+      // Calculate profit as difference from previous day
+      if (index === 0) {
+        // First day: profit is the actual daily profit
+        day.profit = day.dailyProfit;
+      } else {
+        // Subsequent days: profit is net worth increase from previous day
+        day.profit = day.netWorth - previousNetWorth;
+      }
 
-      previousDayNetWorth = cumulativeNetWorth;
+      // Calculate ROI based on starting cash (196M)
+      day.roi = startingNetWorth > 0 ? ((cumulativeNetWorth - startingNetWorth) * 100) / startingNetWorth : 0;
+
+      // Calculate growth percentage (day's profit as % of previous day's net worth)
+      day.growth = previousNetWorth > 0 ? (day.profit * 100) / previousNetWorth : 0;
+
+      previousNetWorth = cumulativeNetWorth;
     });
 
     // Sort by date descending for display
