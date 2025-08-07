@@ -8,8 +8,15 @@ const multer = require('multer');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Database setup (we'll add this in the next step)
-const db = require('./database/db');
+// Database setup - choose based on environment
+let db;
+if (process.env.POSTGRES_URL) {
+  // Use Postgres for production (Vercel)
+  db = require('./database/postgres-db');
+} else {
+  // Use SQLite for local development
+  db = require('./database/db');
+}
 
 // Middleware setup
 app.use(express.urlencoded({ extended: true }));
@@ -17,19 +24,39 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Session configuration
-app.use(session({
-  store: new SQLiteStore({
-    db: 'sessions.sqlite',
-    dir: './database/'
-  }),
-  secret: 'osrs-trading-tracker-secret-change-this',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false, // Set to true in production with HTTPS
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
+if (process.env.POSTGRES_URL) {
+  // Use Postgres session store for production
+  const pgSession = require('connect-pg-simple')(session);
+  app.use(session({
+    store: new pgSession({
+      conString: process.env.POSTGRES_URL,
+      createTableIfMissing: true
+    }),
+    secret: process.env.SESSION_SECRET || 'osrs-trading-tracker-secret-change-this',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
+} else {
+  // Use SQLite session store for local development
+  const SQLiteStore = require('connect-sqlite3')(session);
+  app.use(session({
+    store: new SQLiteStore({
+      db: 'sessions.sqlite',
+      dir: './database/'
+    }),
+    secret: 'osrs-trading-tracker-secret-change-this',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
+}
 
 // Handlebars setup (template engine)
 app.engine('hbs', engine({
