@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+
+    <!-- Bootstrap & Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Chart.js (for charts) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.min.js"></script>
+
+    <style>
+        :root {
+            --osrs-gold: #FFD700;
+            --osrs-brown: #8B4513;
+            --osrs-dark-brown: #654321;
+            --osrs-green: #228B22;
+            --osrs-red: #DC143C;
+            --osrs-blue: #4169E1;
+            --parchment: #F5E6D3;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 25% 25%, rgba(255,215,0,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(139,69,19,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(255,215,0,0.06) 0%, transparent 50%),
+                linear-gradient(135deg, #0d1b2a 0%, #1b263b 25%, #2d3748 50%, #4a5568 75%, #2d3748 100%),
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,215,0,0.02) 2px, rgba(255,215,0,0.02) 4px);
+            background-size: 400px 400px, 350px 350px, 500px 500px, 100% 100%, 20px 20px;
+            background-attachment: fixed;
+            font-family: 'Cinzel', serif;
+            color: #333;
+            min-height: 100vh;
+            animation: medievalShimmer 25s ease-in-out infinite;
+        }
+
+        @keyframes medievalShimmer {
+            0%, 100% { filter: brightness(1) contrast(1); }
+            50% { filter: brightness(1.05) contrast(1.1); }
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--osrs-dark-brown), var(--osrs-brown)) !important;
+            border-bottom: 4px solid var(--osrs-gold);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-family: 'MedievalSharp', cursive;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: var(--osrs-gold) !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            font-weight: bold;
+        }
+
+        .nav-link {
+            color: #FFE4B5 !important;
+            font-weight: 600;
+            border-radius: 15px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,215,0,0.2);
+            color: var(--osrs-gold) !important;
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            border-radius: 15px;
+            border-width: 3px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(34, 139, 34, 0.1);
+            border-color: var(--osrs-green);
+            color: var(--osrs-green);
+        }
+
+        .alert-warning {
+            background: rgba(255, 140, 0, 0.1);
+            border-color: #FF8C00;
+            color: #B8860B;
+        }
+
+        .alert-danger {
+            background: rgba(220, 20, 60, 0.1);
+            border-color: var(--osrs-red);
+            color: var(--osrs-red);
+        }
+
+        .alert-info {
+            background: rgba(65, 105, 225, 0.1);
+            border-color: var(--osrs-blue);
+            color: var(--osrs-blue);
+        }
+
+        .sparkle {
+            position: relative;
+        }
+
+        .sparkle::after {
+            content: "✨";
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand sparkle" href="/">
+                <i class="fas fa-dragon me-2"></i>OSRS Trading Tracker
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    <a class="nav-link" href="/daily-returns"><i class="fas fa-calendar-day me-1"></i>Daily Returns</a>
+                    <a class="nav-link" href="/timeline"><i class="fas fa-chart-line me-1"></i>Timeline</a>
+                    <a class="nav-link" href="/records"><i class="fas fa-scroll me-1"></i>All Records</a>
+                    {{#if isAdmin}}
+                        <a class="nav-link" href="/upload"><i class="fas fa-upload me-1"></i>Import Data</a>
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                    {{else}}
+                        <a class="nav-link" href="/login"><i class="fas fa-key me-1"></i>Admin Login</a>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {{#if success}}
+        <div class="container mt-3">
+            <div class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle me-2"></i>{{success}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    {{/if}}
+
+    {{#if warning}}
+        <div class="container mt-3">
+            <div class="alert alert-warning alert-dismissible fade show">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{warning}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    {{/if}}
+
+    {{#if error}}
+        <div class="container mt-3">
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-circle me-2"></i>{{error}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    {{/if}}
+
+    {{#if info}}
+        <div class="container mt-3">
+            <div class="alert alert-info alert-dismissible fade show">
+                <i class="fas fa-info-circle me-2"></i>{{info}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    {{/if}}
+
+    <!-- Main Content -->
+    <main>
+        {{{body}}}
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Page-specific scripts -->
+    {{#if pageScript}}
+        {{{pageScript}}}
+    {{/if}}
+</body>
+</html>

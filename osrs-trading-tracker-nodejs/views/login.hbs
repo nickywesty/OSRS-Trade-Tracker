@@ -1,0 +1,200 @@
+<div class="login-page">
+    <div class="container d-flex align-items-center justify-content-center min-vh-100">
+        <div class="login-container">
+            <div class="text-center">
+                <i class="fas fa-shield-alt shield-icon"></i>
+                <h1 class="login-title">Admin Portal</h1>
+                <p class="mb-4" style="color: var(--osrs-brown); font-weight: bold;">
+                    🛡️ Authorized Personnel Only 🛡️
+                </p>
+            </div>
+
+            {{#if error}}
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{error}}
+                </div>
+            {{/if}}
+
+            {{#if logout}}
+                <div class="alert alert-success" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    {{logout}}
+                </div>
+            {{/if}}
+
+            <form action="/login" method="post">
+                <div class="mb-4">
+                    <label for="username" class="form-label fw-bold" style="color: var(--osrs-brown);">
+                        <i class="fas fa-user me-2"></i>Username
+                    </label>
+                    <input type="text" class="form-control" id="username" name="username" required
+                           placeholder="Enter your admin username">
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-bold" style="color: var(--osrs-brown);">
+                        <i class="fas fa-key me-2"></i>Password
+                    </label>
+                    <input type="password" class="form-control" id="password" name="password" required
+                           placeholder="Enter your secret password">
+                </div>
+
+                <div class="d-grid gap-3">
+                    <button type="submit" class="btn btn-login">
+                        <i class="fas fa-dungeon me-2"></i>Enter The Realm
+                    </button>
+
+                    <a href="/" class="text-center back-link">
+                        <i class="fas fa-arrow-left me-2"></i>Return to Dashboard
+                    </a>
+                </div>
+            </form>
+
+            <div class="text-center mt-4">
+                <small style="color: var(--osrs-brown); opacity: 0.8;">
+                    🏰 Protected by ancient OSRS magic 🏰
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .login-page {
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255,215,0,0.18) 0%, transparent 45%),
+            radial-gradient(circle at 20% 20%, rgba(139,69,19,0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255,215,0,0.1) 0%, transparent 40%),
+            linear-gradient(180deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%),
+            repeating-conic-gradient(from 45deg at 50% 50%, transparent 0deg, rgba(255,215,0,0.04) 20deg, transparent 40deg);
+        background-size: 200px 200px, 350px 350px, 300px 300px, 100% 100%, 80px 80px;
+        background-attachment: fixed;
+        animation: mysticalAura 15s ease-in-out infinite;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+    }
+
+    @keyframes mysticalAura {
+        0%, 100% { filter: brightness(1) contrast(1); }
+        50% { filter: brightness(1.1) contrast(1.2); }
+    }
+
+    .login-container {
+        background: linear-gradient(145deg, var(--parchment), #E6D7C3);
+        border: 8px solid var(--osrs-brown);
+        border-radius: 30px;
+        padding: 50px;
+        box-shadow:
+            0 0 50px rgba(255,215,0,0.5),
+            inset 0 0 30px rgba(0,0,0,0.1),
+            0 20px 50px rgba(0,0,0,0.5);
+        max-width: 500px;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-container::before {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background: linear-gradient(45deg, var(--osrs-gold), var(--osrs-brown), var(--osrs-gold));
+        z-index: -1;
+        border-radius: 34px;
+    }
+
+    .login-title {
+        font-family: 'MedievalSharp', cursive;
+        color: var(--osrs-brown);
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .form-control {
+        border: 3px solid var(--osrs-brown);
+        border-radius: 15px;
+        padding: 15px;
+        font-size: 1.1rem;
+        background: rgba(255,255,255,0.9);
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--osrs-gold);
+        box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        background: white;
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, var(--osrs-brown), var(--osrs-dark-brown));
+        border: 3px solid var(--osrs-gold);
+        color: var(--osrs-gold);
+        font-weight: bold;
+        font-size: 1.2rem;
+        padding: 15px 30px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-family: 'MedievalSharp', cursive;
+    }
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, var(--osrs-gold), #FFA500);
+        color: var(--osrs-brown);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .back-link {
+        color: var(--osrs-brown);
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: var(--osrs-gold);
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .shield-icon {
+        color: var(--osrs-gold);
+        font-size: 4rem;
+        margin-bottom: 20px;
+        animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+        from { filter: drop-shadow(0 0 10px var(--osrs-gold)); }
+        to { filter: drop-shadow(0 0 25px var(--osrs-gold)); }
+    }
+
+    .alert {
+        border: 2px solid var(--osrs-brown);
+        border-radius: 15px;
+        font-weight: bold;
+    }
+
+    .alert-danger {
+        background: rgba(220, 20, 60, 0.1);
+        border-color: var(--osrs-red);
+        color: var(--osrs-red);
+    }
+
+    .alert-success {
+        background: rgba(34, 139, 34, 0.1);
+        border-color: var(--osrs-green);
+        color: var(--osrs-green);
+    }
+</style>

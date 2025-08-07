@@ -1,0 +1,81 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="error-container">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle fa-5x mb-4" style="color: var(--osrs-gold);"></i>
+                    <h1 class="error-title">Oops! Quest Failed</h1>
+                    <p class="error-message">{{error}}</p>
+                    <div class="mt-4">
+                        <a href="/" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home me-2"></i>Return to Grand Exchange
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        background: linear-gradient(145deg, var(--parchment), #E6D7C3);
+        border: 8px solid var(--osrs-brown);
+        border-radius: 25px;
+        padding: 50px;
+        box-shadow:
+            0 0 30px rgba(255,215,0,0.3),
+            inset 0 0 20px rgba(0,0,0,0.1),
+            0 15px 35px rgba(0,0,0,0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .error-container::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, var(--osrs-gold), var(--osrs-brown), var(--osrs-gold));
+        z-index: -1;
+        border-radius: 27px;
+    }
+
+    .error-title {
+        font-family: 'MedievalSharp', cursive;
+        color: var(--osrs-brown);
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        margin-bottom: 20px;
+    }
+
+    .error-message {
+        font-size: 1.2rem;
+        color: var(--osrs-brown);
+        margin-bottom: 30px;
+        font-weight: 600;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--osrs-blue), #1E90FF);
+        border: 3px solid var(--osrs-gold);
+        color: white;
+        font-weight: bold;
+        font-size: 1.1rem;
+        padding: 15px 30px;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: 'Cinzel', serif;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #1E90FF, var(--osrs-blue));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        color: white;
+    }
+</style>
